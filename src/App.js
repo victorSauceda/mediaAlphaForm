@@ -169,32 +169,12 @@ const App = () => {
                         xs={12}
                         style={{
                           display: "inline",
-                          // verticalAlign: "middle",
-                          // margin: "auto",
-                          // alignItems: "flex-start",
                         }}
                       >
                         <FormControlLabel
-                          style={
-                            {
-                              // display: "inline",
-                              // verticalAlign: "middle",
-                              // margin: "auto",
-                              // alignItems: "flex-start",
-                              //   justifyContent: "flex-start",
-                              //   display: "flex",
-                              //   flexDirection: "row",
-                              //   margin: "auto",
-                            }
-                          }
                           control={
                             <Checkbox
                               name={name}
-                              // style={{
-                              //   justifyContent: "center",
-                              //   display: "flex",
-                              //   alignItems: "left",
-                              // }}
                               value={checked}
                               checked={checkBoxState[index]}
                               onChange={(e) =>
@@ -224,7 +204,6 @@ const App = () => {
                       classOneEndDateText,
 
                       classTwoStartDateText,
-
                       classTwoEndDateText,
                       checked,
                     } = areaOfStudyItem;
@@ -235,7 +214,6 @@ const App = () => {
                           md={12}
                           xs={12}
                           style={{
-                            // margin: "auto",
                             display: "flex",
                             justifyContent: "center",
                           }}
@@ -246,10 +224,6 @@ const App = () => {
                                 name={name}
                                 value={checked}
                                 checked={checkBoxState[index]}
-
-                                // onChange={(e) =>
-                                //   isCheckboxChecked(index, e.target.checked)
-                                // }
                               />
                             }
                             label={`${name}: ${classOneStartDateText} - ${classOneEndDateText}`}
@@ -261,7 +235,6 @@ const App = () => {
                             md={12}
                             xs={12}
                             style={{
-                              // margin: "auto",
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "flex-start",
