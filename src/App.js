@@ -17,34 +17,46 @@ import DateAdapter from "@mui/lab/AdapterMoment";
 let initAreaOfStudyState = [
   {
     name: "Sports",
-    classOneStartDate: "",
-    classTwoStartDate: "",
-    classOneEndDate: "",
-    classTwoEndDate: "",
+    classOneStartDateValue: 7.23,
+    classOneStartDateText: "July 23rd",
+    classOneEndDateValue: 8.23,
+    classOneEndDateText: "August 23rd",
+    classTwoStartDateValue: 8.26,
+    classTwoStartDateText: "August 26th",
+    classTwoEndDateValue: 9.26,
+    classTwoEndDateText: "September 26th",
     checked: false,
   },
   {
     name: "Arts",
-    classOneStartDate: "",
-    classTwoStartDate: "",
-    classOneEndDate: "",
-    classTwoEndDate: "",
+    classOneStartDateValue: 5.1,
+    classOneStartDateText: "May 10th",
+    classOneEndDateValue: 6.1,
+    classOneEndDateText: "June 10th",
+    classTwoStartDateValue: 7.11,
+    classTwoStartDateText: "July 11th",
+    classTwoEndDateValue: 8.11,
+    classTwoEndDateText: "August 11th",
     checked: false,
   },
   {
     name: "Literature",
-    classOneStartDate: "",
-
-    classOneEndDate: "",
-
+    classOneStartDateValue: 7.11,
+    classOneStartDateText: "July 11th",
+    classOneEndDateValue: 10.11,
+    classOneEndDateText: "October 11th",
     checked: false,
   },
   {
     name: "Music",
-    classOneStartDate: "",
-    classTwoStartDate: "",
-    classOneEndDate: "",
-    classTwoEndDate: "",
+    classOneStartDateValue: 6.09,
+    classOneStartDateText: "June 9th",
+    classOneEndDateValue: 7.09,
+    classOneEndDateText: "July 9th",
+    classTwoStartDateValue: 8.09,
+    classTwoStartDateText: "August 9th",
+    classTwoEndDateValue: 9.09,
+    classTwoEndDateText: "September 9th",
     checked: false,
   },
 ];
@@ -82,7 +94,16 @@ const App = () => {
 
   return (
     <>
-      <div style={{ margin: "auto", textAlign: "center" }}>
+      <div
+        style={{
+          margin: "auto",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          width: "50%",
+        }}
+      >
         <form role="form" onSubmit={handleSubmit}>
           <LocalizationProvider dateAdapter={DateAdapter}>
             <div
@@ -114,7 +135,7 @@ const App = () => {
                 name="email"
                 title={"Please enter a valid email"}
                 onChange={handleChange}
-                style={{ marginTop: "1rem" }}
+                style={{ margin: "1rem 0" }}
                 placeholder={`someone@gmail.com`}
                 error={errors.email ? true : false}
                 helperText={errors.email ? "Please enter a valid email" : false}
@@ -123,6 +144,7 @@ const App = () => {
               />
               <DesktopDatePicker
                 label="Date of Birth"
+                style={{ marginTop: "1rem" }}
                 inputFormat="MM/dd/yyyy"
                 // value={value}
                 value="Value"
@@ -130,18 +152,49 @@ const App = () => {
                 renderInput={(params) => <TextField {...params} />}
               />
               <FormGroup>
-                <h1 style={{ marginTop: "1.5rem", textAlign: "center" }}>
-                  Areas of study
-                </h1>
+                <h3 style={{ marginTop: "1.5rem", textAlign: "center" }}>
+                  {`Areas of study (multiple allowed)`}
+                </h3>
                 <Grid container>
                   {initAreaOfStudyState.map((areaOfStudyItem, index) => {
-                    const { name, checked } = areaOfStudyItem;
+                    const {
+                      name,
+
+                      checked,
+                    } = areaOfStudyItem;
                     return (
-                      <Grid item md={6} xs={12}>
+                      <Grid
+                        item
+                        md={3}
+                        xs={12}
+                        style={{
+                          display: "inline",
+                          // verticalAlign: "middle",
+                          // margin: "auto",
+                          // alignItems: "flex-start",
+                        }}
+                      >
                         <FormControlLabel
+                          style={
+                            {
+                              // display: "inline",
+                              // verticalAlign: "middle",
+                              // margin: "auto",
+                              // alignItems: "flex-start",
+                              //   justifyContent: "flex-start",
+                              //   display: "flex",
+                              //   flexDirection: "row",
+                              //   margin: "auto",
+                            }
+                          }
                           control={
                             <Checkbox
                               name={name}
+                              // style={{
+                              //   justifyContent: "center",
+                              //   display: "flex",
+                              //   alignItems: "left",
+                              // }}
                               value={checked}
                               checked={checkBoxState[index]}
                               onChange={(e) =>
@@ -152,6 +205,84 @@ const App = () => {
                           label={name}
                         />
                       </Grid>
+                    );
+                  })}
+                </Grid>
+              </FormGroup>
+              <FormGroup>
+                <h3 style={{ marginTop: "1.5rem", textAlign: "center" }}>
+                  Class schedule. One class allowed per area of study. Class
+                  will take place every day during the date range.
+                </h3>
+                <Grid container>
+                  {initAreaOfStudyState.map((areaOfStudyItem, index) => {
+                    const {
+                      name,
+
+                      classOneStartDateText,
+
+                      classOneEndDateText,
+
+                      classTwoStartDateText,
+
+                      classTwoEndDateText,
+                      checked,
+                    } = areaOfStudyItem;
+                    return (
+                      <>
+                        <Grid
+                          item
+                          md={12}
+                          xs={12}
+                          style={{
+                            // margin: "auto",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name={name}
+                                value={checked}
+                                checked={checkBoxState[index]}
+
+                                // onChange={(e) =>
+                                //   isCheckboxChecked(index, e.target.checked)
+                                // }
+                              />
+                            }
+                            label={`${name}: ${classOneStartDateText} - ${classOneEndDateText}`}
+                          />
+                        </Grid>
+                        {classTwoEndDateText && (
+                          <Grid
+                            item
+                            md={12}
+                            xs={12}
+                            style={{
+                              // margin: "auto",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "flex-start",
+                            }}
+                          >
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  name={name}
+                                  value={checked}
+                                  checked={checkBoxState[index]}
+                                  // onChange={(e) =>
+                                  //   isCheckboxChecked(index, e.target.checked)
+                                  // }
+                                />
+                              }
+                              label={`${name}: ${classTwoStartDateText} - ${classTwoEndDateText}`}
+                            />
+                          </Grid>
+                        )}
+                      </>
                     );
                   })}
                 </Grid>
