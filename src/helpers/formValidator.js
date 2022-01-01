@@ -1,11 +1,11 @@
-export const validator = (values, fieldName) => {
+export const validator = (value, fieldName) => {
   let errors = {};
   switch (fieldName) {
-    case "email":
-      validateEmail(values.email, errors);
+    case "userEmail":
+      validateEmail(value, errors);
       break;
-    case "fullName":
-      validateFullName(values.fullName, errors);
+    case "userName":
+      validateFullName(value, errors);
       break;
 
     default:
@@ -13,31 +13,35 @@ export const validator = (values, fieldName) => {
   return errors;
 };
 
-export const validateEmail = (email, errors) => {
+export const validateEmail = (userEmail, errors) => {
   let result = true;
 
-  if (!email) {
-    errors.email = "Email is Required";
+  if (!userEmail) {
+    errors.userEmail = "Email is Required";
     result = false;
   } else {
     const re =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    result = re.test(String(email).toLowerCase());
-    if (!result) errors.email = "Invalid Email address";
+    result = re.test(String(userEmail).toLowerCase());
+
+    if (!result) {
+      return (errors.userEmail = "Invalid Email address");
+    }
   }
   return result;
 };
-export const validateFullName = (fullName, errors) => {
+export const validateFullName = (userName, errors) => {
   let result = true;
 
-  if (!fullName) {
-    errors.fullName = "Invalid full name";
+  if (!userName) {
+    errors.userName = "Invalid full name";
     result = false;
   } else {
     const re = /^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/;
-    result = re.test(String(fullName).toLowerCase());
+    result = re.test(String(userName).toLowerCase());
+
     if (!result)
-      errors.fullName = "Invalid full name, remove special characters";
+      return (errors.userName = "Invalid full name, remove special characters");
   }
   return result;
 };
