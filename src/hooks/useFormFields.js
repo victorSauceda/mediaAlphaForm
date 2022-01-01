@@ -28,6 +28,7 @@ const useFormFields = ({ initState, validator }) => {
       ...errors,
       [fieldName]: Object.values(failedFields)[0],
     }));
+
     setIsSubmited(true);
   };
   return {
