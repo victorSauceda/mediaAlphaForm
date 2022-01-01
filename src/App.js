@@ -172,7 +172,7 @@ const App = () => {
                 margin: "4rem 2rem",
               }}
             >
-              <h1>Class Form</h1>
+              <h1>Media Alpha Form</h1>
               <TextField
                 value={userName}
                 name="userName"
