@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./App.css";
 import {
   Button,
   TextField,
@@ -7,84 +6,20 @@ import {
   FormControlLabel,
   Grid,
   Checkbox,
+  Modal,
+  Box,
+  Typography,
 } from "@mui/material";
 import { validator } from "../src/helpers/formValidator";
-import useFormFields from "../src/hooks/useFormFields";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DateAdapter from "@mui/lab/AdapterMoment";
-
-const classesList = [
-  {
-    topic: "Arts",
-    startDateText: "May 10th",
-    startDateValue: 5.1,
-    endDateText: "June 10th",
-    endDateValue: 6.1,
-    classChosen: false,
-    uuid: "arts_1",
-  },
-  {
-    topic: "Arts",
-    startDateText: "July 11th",
-    startDateValue: 7.11,
-    endDateText: "August 11th",
-    endDateValue: 8.11,
-    classChosen: false,
-    uuid: "arts_2",
-  },
-  {
-    topic: "Literature",
-    startDateText: "July 11th",
-    startDateValue: 7.11,
-    endDateText: "October 11th",
-    endDateValue: 10.11,
-    classChosen: false,
-    uuid: "literature_1",
-  },
-  {
-    topic: "Music",
-    startDateText: "June 9th",
-    startDateValue: 6.09,
-    endDateText: "July 9th",
-    endDateValue: 5.1,
-    classChosen: false,
-    uuid: "music_1",
-  },
-  {
-    topic: "Music",
-    startDateText: "August 9th",
-    startDateValue: 8.09,
-    endDateText: "September 9th",
-    endDateValue: 9.09,
-    classChosen: false,
-    uuid: "music_2",
-  },
-  {
-    topic: "Sports",
-    startDateText: "July 23rd",
-    startDateValue: 7.23,
-    endDateText: "August 23rd",
-    endDateValue: 8.23,
-    classChosen: false,
-    uuid: "sports_1",
-  },
-  {
-    topic: "Sports",
-    startDateText: "August 26th",
-    startDateValue: 8.26,
-    endDateText: "September 26th",
-    endDateValue: 9.26,
-    classChosen: false,
-    uuid: "sports_2",
-  },
-];
+import classesList from "../src/const/classesList";
 const App = () => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [userDob, setUserDob] = useState(new Date("2014-08-18T21:11:54"));
+  const [userDob, setUserDob] = useState(new Date("1990-08-18T21:11:54"));
   const [courseCatalog, setCourseCatalog] = useState(classesList);
-
   const allAreasOfStudy = classesList.map((course) => course.topic);
   const uniqueAreasOfStudy = [...new Set(allAreasOfStudy)];
   const areasOfStudyChecked = {};
@@ -93,14 +28,9 @@ const App = () => {
   }
   const [areasOfStudyCheckbox, setAreasOfStudyCheckbox] =
     useState(areasOfStudyChecked);
-
   const [errors, setErrors] = useState({});
-  const [isSubmited, setIsSubmited] = useState(false);
-
-  const submit = () => {
-    console.log(" Submited");
-  };
-
+  const [openModal, setOpenModal] = useState(false);
+  const [finalClassesChosen, setFinalClassesChosen] = useState(null);
   const handleDateChange = (newValue) => {
     setUserDob(newValue);
   };
@@ -115,7 +45,6 @@ const App = () => {
   const handleBlurUserName = (e) => {
     const { name: fieldName } = e.target;
     const failedFields = validator(userName, fieldName);
-
     setErrors(() => ({
       ...errors,
       ["userName"]: Object.values(failedFields)[0],
@@ -131,21 +60,32 @@ const App = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name: fieldName } = e.target;
-    setIsSubmited(true);
+    const json = {
+      fullName: userName,
+      email: userEmail,
+      dob: userDob.toString().slice(4, 16),
+      areasOfStudy: areasOfStudyChecked,
+      classes: finalClassesChosen,
+    };
+    console.log(json);
+    setOpenModal(!openModal);
   };
-
+  const handleOpen = () => {
+    setOpenModal(!openModal);
+    const filteredClasses = courseCatalog.filter(
+      (item) => item.classChosen == true
+    );
+    setFinalClassesChosen(filteredClasses);
+  };
   const updateAreaOfStudyChecked = (topicName, checkedStatus) => {
     const newState = { ...areasOfStudyCheckbox };
     newState[topicName] = checkedStatus;
     setAreasOfStudyCheckbox(newState);
   };
-
   const updateCourseChecked = (courseId, checkedStatus) => {
     const clickedCourseIndex = courseCatalog.findIndex(
       (course) => course.uuid === courseId
     );
-
     if (clickedCourseIndex === -1) {
       return;
     }
@@ -153,7 +93,6 @@ const App = () => {
     newCourseInfo[clickedCourseIndex].classChosen = checkedStatus;
     setCourseCatalog(newCourseInfo);
   };
-
   const isCourseSelectable = (courseId) => {
     if (topicAlreadyChosen(courseId) || chosenDatesOverlapped(courseId)) {
       return false;
@@ -161,19 +100,15 @@ const App = () => {
       return true;
     }
   };
-
   const chosenDatesOverlapped = (courseId) => {
     const currentCourse = courseCatalog.find(
       (course) => course.uuid === courseId
     );
-    
     const currentStart = currentCourse.startDateValue;
     const currentEnd = currentCourse.endDateValue;
-
     const filteredCourses = courseCatalog.filter((course) => {
       return course.classChosen == true && course.uuid !== courseId;
     });
-
     for (let selectedCourse of filteredCourses) {
       const selectedStart = selectedCourse.startDateValue;
       const selectedEnd = selectedCourse.endDateValue;
@@ -183,9 +118,7 @@ const App = () => {
     }
     return false;
   };
-
   const datesOverlap = (start1, end1, start2, end2) => {
-
     let isOverlapped;
     if (
       (start1 >= start2 && start1 < end2) ||
@@ -196,29 +129,24 @@ const App = () => {
     } else {
       isOverlapped = false;
     }
-    console.log("Is Overlapped? ", isOverlapped);
     return isOverlapped;
   };
-
   const topicAlreadyChosen = (courseId) => {
     const courseTopic = courseCatalog.find(
       (course) => course.uuid === courseId
     ).topic;
-
     const selectedSameTopicCourses = courseCatalog.filter(
       (course) =>
         course.uuid != courseId &&
         course.classChosen &&
         course.topic === courseTopic
     );
-
     if (selectedSameTopicCourses.length) {
       return true;
     } else {
       return false;
     }
   };
-
   const isValidForm =
     Object.values(errors).filter((error) => typeof error !== "undefined")
       .length === 0;
@@ -288,6 +216,7 @@ const App = () => {
                 style={{ marginTop: "1rem" }}
                 inputFormat="MM/DD/yyyy"
                 value={userDob}
+                defaultValue={null}
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -359,19 +288,14 @@ const App = () => {
                                 value={classChosen}
                                 checked={classChosen}
                                 disabled={!isCourseSelectable(uuid)}
-                                onChange={
-                                  (e) => {
-                                    console.log(e);
-                                    updateCourseChecked(uuid, e.target.checked)
-                                  }
-                 
-                                }
+                                onChange={(e) => {
+                                  updateCourseChecked(uuid, e.target.checked);
+                                }}
                               />
                             }
                             label={`${topic}: ${startDateText} - ${endDateText}`}
                           />
                         </Grid>
-       
                       </>
                     );
                   })}
@@ -380,18 +304,104 @@ const App = () => {
             </div>
             <hr style={{ margin: "2rem" }} />
             <Button
-              // type="submit"
-              onClick={() => setIsSubmited(!isSubmited)}
-              // disabled={true}
+              style={{
+                backgroundColor: !isValidForm ? "gray" : "green",
+                color: "white",
+                height: "3rem",
+              }}
+              onClick={handleOpen}
+              disabled={!isValidForm}
             >
               <h4 style={{ padding: "1rem" }}>Submit</h4>
             </Button>
-            {isSubmited && (
-              <div>
-                <p>{userName}</p>
-                <p>{userEmail}</p>
-              </div>
-            )}
+            <Modal
+              open={openModal}
+              onClose={() => setOpenModal(!openModal)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box
+                style={{
+                  maxHeight: "calc(100vh - 210px)",
+                  overflowY: "auto",
+                  position: "absolute",
+                  textAlign: "center",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 400,
+                  backgroundColor: "white",
+                  padding: "2rem",
+                  border: "2px solid #000",
+                  boxShadow: "24",
+                  pt: 2,
+                  px: 4,
+                  pb: 3,
+                }}
+              >
+                <Typography id="modal-modal-title" component="h5">
+                  <b>
+                    {" "}
+                    Are you sure you want to submit? Please review your
+                    information below to ensure every thing is correct before
+                    submitting
+                  </b>
+                </Typography>
+                <hr style={{ margin: "1rem 0" }} />
+                <Typography
+                  id="modal-modal-title"
+                  style={{ marginTop: "1rem" }}
+                >
+                  <b>Full Name:</b> {userName}
+                </Typography>
+                <Typography
+                  id="modal-modal-description"
+                  style={{ marginTop: "1rem" }}
+                >
+                  <b>Email:</b> {userEmail}
+                </Typography>
+                <Typography
+                  id="modal-modal-description"
+                  style={{ marginTop: "1rem" }}
+                >
+                  <b>Date of Birth:</b> {userDob.toString().slice(4, 16)}
+                </Typography>
+                {finalClassesChosen &&
+                  finalClassesChosen.map((item, index) => {
+                    const { topic, startDateText, endDateText } = item;
+                    return (
+                      <Typography
+                        id="modal-modal-description"
+                        style={{ margin: "1rem 0" }}
+                      >
+                        <b>Class:</b>{" "}
+                        {`${topic}: ${startDateText} - ${endDateText}`}
+                      </Typography>
+                    );
+                  })}
+                <Button
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    height: "3rem",
+                  }}
+                  onClick={() => setOpenModal(!openModal)}
+                >
+                  <h4 style={{ padding: "1rem" }}>Cancel</h4>
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: "green",
+                    color: "white",
+                    height: "3rem",
+                    marginLeft: "1rem",
+                  }}
+                  onClick={handleSubmit}
+                >
+                  <h4 style={{ padding: "1rem" }}>Submit</h4>
+                </Button>
+              </Box>
+            </Modal>
           </LocalizationProvider>
         </form>
       </div>
