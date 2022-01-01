@@ -37,7 +37,7 @@ export const validateFullName = (userName, errors) => {
     errors.userName = "Invalid full name";
     result = false;
   } else {
-    const re = /^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/;
+    const re = /^[a-zA-Z]+ [a-zA-Z]+$/;
     result = re.test(String(userName).toLowerCase());
 
     if (!result)
